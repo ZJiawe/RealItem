@@ -1,0 +1,215 @@
+@import './variables.scss';
+@import './mixin.scss';
+@import './transition.scss';
+@import './element-ui.scss';
+@import './sidebar.scss';
+@import './btn.scss';
+body {
+  height: 100%;
+  -moz-osx-font-smoothing: grayscale;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-family: Helvetica Neue, Helvetica, PingFang SC, Hiragino Sans GB, Microsoft YaHei, Arial, sans-serif;
+}
+
+label {
+  font-weight: 700;
+}
+
+html {
+  height: 100%;
+  box-sizing: border-box;
+}
+
+#app {
+  height: 100%;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  outline: none;
+  text-decoration: none;
+}
+
+div:focus {
+  outline: none;
+}
+
+a:focus,
+a:active {
+  outline: none;
+}
+
+a,
+a:focus,
+a:hover {
+  cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+}
+
+.clearfix {
+  &:after {
+    visibility: hidden;
+    display: block;
+    font-size: 0;
+    content: " ";
+    clear: both;
+    height: 0;
+  }
+}
+
+//main-container全局样式
+// .app-main {
+//   min-height: 100%;
+// }
+
+code {
+  background: #eef1f6;
+  padding: 15px 16px;
+  margin-bottom: 20px;
+  display: block;
+  line-height: 36px;
+  font-size: 15px;
+  font-family: "Source Sans Pro", "Helvetica Neue", Arial, sans-serif;
+  a {
+    color: #337ab7;
+    cursor: pointer;
+    &:hover {
+      color: rgb(32, 160, 255);
+    }
+  }
+}
+
+.app-container {
+  padding: 20px;
+  box-sizing: border-box;
+  overflow-y: scroll;
+}
+
+.components-container {
+  margin: 30px 50px;
+  position: relative;
+}
+
+.text-white {
+  color: #fff;
+}
+
+.container {
+  padding: 30px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+}
+
+.crumbs {
+  margin-bottom: 20px;
+}
+
+/*VueEditor */
+
+.plugins-tips {
+  padding: 20px 10px;
+  margin-bottom: 20px;
+}
+
+//icon
+.warn-content {
+  background: rgba(66, 185, 131, .1);
+  border-radius: 2px;
+  padding: 16px;
+  padding: 1rem;
+  line-height: 1.6rem;
+  word-spacing: .05rem;
+  a {
+    color: #42b983;
+    font-weight: 600;
+  }
+}
+
+/*BaseForm*/
+
+.form-box {
+  width: 600px;
+}
+
+.form-box .line {
+  text-align: center;
+}
+
+.el-time-panel__content::after,
+.el-time-panel__content::before {
+  margin-top: -7px;
+}
+
+.el-time-spinner__wrapper .el-scrollbar__wrap:not(.el-scrollbar__wrap--hidden-default) {
+  padding-bottom: 0;
+}
+
+/*sidebar*/
+
+.el-submenu__title i {
+  color: #b3b7bf!important;
+}
+thead{
+  background-color:#f4f5f6!important;
+}
+.has-gutter{
+  background-color:#f4f5f6!important;
+}
+
+.el-submenu__title i {
+  color: #b3b7bf!important;
+}
+.el-table th{
+  background-color: #f4f5f6;
+  color:#999999;
+}
+tbody {
+  background-color: #fff;
+  color:#666666;
+}
+.el-menu-item, .el-submenu__title{
+  height: 50px;
+  line-height: 50px;
+}
+#app .sidebar-container .svg-icon{
+  margin-right: 12px;
+}
+.el-table--fit{
+  margin-top: 60px;
+}
+.navbar .right-menu .theme-switch[data-v-bb4f6990]{
+  display:none!important;
+}
+.el-dialog__body{padding:30px 20px;color:#606266;line-height:24px;font-size:14px;border-top:solid 1px #E1E1E1;}
+.el-dialog--center .el-dialog__body{text-align:initial;padding:25px 25px 30px;margin-top: 20px;}
+.el-dialog__title{line-height:24px;font-size:18px;color:#303133;position:absolute;left:20px;top:17px;font-size:16px;}
+.el-radio__input.is-checked .el-radio__inner
+{
+  border-color: #409EFF;
+  background: #ffffff;
+}
+.el-radio__inner::after {
+  background-color: #409EFF;
+}
+.el-col{margin-bottom:20px;}
+.el-breadcrumb__item{display:none;}
+
+body{overflow-y: hidden;}
+.el-input-group__append, .el-input-group__prepend{
+  padding: 0 12px!important;
+}
+.theme-switch,.right-menu-item,.el-tooltip{
+  display:none;
+}

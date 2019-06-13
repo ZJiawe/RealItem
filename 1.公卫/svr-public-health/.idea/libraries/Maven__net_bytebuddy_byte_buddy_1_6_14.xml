@@ -1,0 +1,13 @@
+<component name="libraryTable">
+  <library name="Maven: net.bytebuddy:byte-buddy:1.6.14">
+    <CLASSES>
+      <root url="jar://D:/1.Software/2.CodeSoftware/10.yihuPacket/repository/net/bytebuddy/byte-buddy/1.6.14/byte-buddy-1.6.14.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://D:/1.Software/2.CodeSoftware/10.yihuPacket/repository/net/bytebuddy/byte-buddy/1.6.14/byte-buddy-1.6.14-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://D:/1.Software/2.CodeSoftware/10.yihuPacket/repository/net/bytebuddy/byte-buddy/1.6.14/byte-buddy-1.6.14-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

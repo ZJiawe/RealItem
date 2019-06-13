@@ -1,0 +1,11 @@
+{
+  "successFlg": false,
+  "pageSize": 15,
+  "currPage": 1,
+  "totalPage": 0,
+  "totalCount": 0,
+  "detailModelList": [],
+  "obj": {},
+  "errorMsg": "Required request body is missing: public com.yihu.ehr.util.rest.Envelop com.yihu.ehr.health.user.controller.UserEndPoint.createUser(java.lang.String)",
+  "errorCode": 500
+}

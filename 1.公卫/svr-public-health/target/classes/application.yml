@@ -1,0 +1,52 @@
+server:
+  port: 10055
+
+info:
+  app:
+    name: SVR-PUBLIC-HEALTH
+    description: EHR Platform Microservice.
+    version: 1.0.0
+    clientId: 3Y31QxxuWi
+
+spring:
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    max-active: 20
+    max-idle: 8
+    min-idle: 8
+    validation-query: SELECT 1
+    test-on-borrow: true
+
+deploy.region: 12345
+
+---
+spring:
+  profiles: dev
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/doc10?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: 123456
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+    show-sql: true
+service-gateway:
+    agZuul: http://jksr.srswjw.gov.cn:1235/gateway/
+    agAdmin: http://jksr.srswjw.gov.cn:1235/gateway/
+    oauthOutUrl: http://27.154.233.186:10001/
+    CrossOrigin: http://localhost:9528
+
+---
+spring:
+  profiles: prod
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3310/doc10?useUnicode=true&characterEncoding=UTF-8&useSSL=false
+    username: root
+    password: 123456
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL5Dialect
+    hibernate.dialect: org.hibernate.dialect.MySQL5Dialect
+    show-sql: true
+service-gateway:
+    agZuul: http://jksr.srswjw.gov.cn:1235/gateway/
+    CrossOrigin: http://localhost:9528

@@ -1,0 +1,601 @@
+<template>
+  <section class="app-container">
+
+    <el-col :span="24" class="toolbar" style="padding-bottom: 0px;" >
+      <el-form :inline="true" :model="filters" @submit.native.prevent>
+        <table style="width: 100%;">
+          <tr>
+            <td width="40"><span class="mystyle">区域</span></td>
+            <td><el-cascader :options="options" v-model="filters.area"  placeholder="区域"  style="width:100%;" change-on-select ></el-cascader></td>
+            <td width="90" style="padding-left:20px;"><span class="mystyle">建档人</span></td>
+            <td><el-input v-model="filters.creator" placeholder="建档人" style="width:100%;" clearable></el-input></td>
+            <td width="60" style="padding-left:20px;"><span class="mystyle">姓名</span></td>
+            <td width="120"><el-input v-model="filters.name" placeholder="姓名" style="width:100%;" clearable></el-input></td>
+            <td style="padding-left:20px;"><span class="mystyle">身份证号</span></td>
+            <td><el-input v-model="filters.peopleId" placeholder="身份证号" style="width:100%;margin-right:30px;" clearable></el-input></td>
+          </tr>
+          <tr height="16"></tr>
+          <tr>
+            <td><span class="mystyle">性别</span></td>
+            <td>
+              <el-select v-model="filters.sex" placeholder="性别" style="width: 100%" >
+                <el-option key="" label="" value=""></el-option>
+                <el-option key="男" label="男" value="男"></el-option>
+                <el-option key="女" label="女" value="女"></el-option>
+                <el-option key="未知性别" label="未知性别" value="未知性别"></el-option>
+              </el-select>
+            </td>
+            <td style="padding-left:20px;"><span class="mystyle">责任医生</span></td>
+            <td><el-input v-model="filters.responDoctor" placeholder="责任医生" style="width:100%;" clearable></el-input></td>
+            <td style="padding-left:20px;"><span class="mystyle">民族</span></td>
+            <td><el-cascader :options="ethnic" v-model="filters.ethnic"  style=" width: 100%;" placeholder="民族"></el-cascader></td>
+            <td colspan="2" style="text-align:right;">
+              <el-button type="primary" v-on:click="getUsers" style="background-color:#4db2ee;margin-right:10px;border-color:transparent;height:40px;" icon="el-icon-search">查询</el-button>
+              <el-button type="primary" v-on:click="clear" style="background-color:#ffffff;color:#909090;border-color: #c1c1c1;font-size: 14px;margin-left:10px;height:40px;" icon="el-icon-back" >重置</el-button>
+            </td>
+          </tr>
+        </table>
+      </el-form>
+    </el-col>
+
+    <!--列表-->
+    <el-table :data="users" :height="tableHeight" highlight-current-row @selection-change="selsChange" border style="width: 100%;" @row-dblclick="goto">
+      <el-table-column type="index" label="序号" width="80">
+      </el-table-column>
+      <el-table-column prop="area" label="区域" width="250">
+      </el-table-column>
+      <el-table-column prop="name" label="姓名" width="80">
+      </el-table-column>
+      <el-table-column prop="peopleId" label="身份证号" width="180">
+      </el-table-column>
+      <el-table-column prop="sex" label="性别" width="60">
+      </el-table-column>
+      <el-table-column prop="age" label="年龄" width="60">
+      </el-table-column>
+      <el-table-column prop="ethnic" label="民族" width="120">
+      </el-table-column>
+      <el-table-column prop="electronicRecord" label="是否建立电子健康档案" min-width="200">
+      </el-table-column>
+      <el-table-column prop="activeFiles" label="是否动态使用健康档案" min-width="200">
+      </el-table-column>
+      <el-table-column prop="crowd" label="人群分类" min-width="120">
+      </el-table-column>
+      <el-table-column prop="responDoctor" label="责任医生" min-width="120">
+      </el-table-column>
+
+      <el-table-column prop="docPeople" label="建档人" width="120" align="center">
+      </el-table-column>
+      <el-table-column prop="docDate" label="建档日期" width="120" align="center" :formatter="timeFormat">
+      </el-table-column>
+    </el-table>
+
+    <!--工具条-->
+    <el-col :span="24" class="toolbar">
+      <el-pagination layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="20" :total="total" style="float:right;">
+      </el-pagination>
+    </el-col>
+
+    <!--编辑界面-->
+
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible" :close-on-click-modal="false" center>
+      <el-form :model="editForm" label-width="170px" :rules="editFormRules" ref="editForm">
+          <el-tabs v-model="activeName">
+              <el-row>
+                <el-col span="12">
+                  <el-form-item label="姓名" prop="name">
+                    <el-input v-model="editForm.name" auto-complete="off"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col span="12">
+                  <el-form-item label="区域">
+                    <el-cascader :options="options" v-model="area" style="width: 100%" placeholder="请选择"></el-cascader>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col span="12">
+                  <el-form-item label="性别">
+                    <el-radio-group v-model="editForm.sex">
+                      <el-radio label="男"></el-radio>
+                      <el-radio label="女"></el-radio>
+                      <el-radio label="未知性别"></el-radio>
+                    </el-radio-group>
+                  </el-form-item>
+                </el-col>
+                <el-col span="12">
+                  <el-form-item label="年龄">
+                    <el-input  v-model="editForm.age" auto-complete="off" ></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col span="12">
+                  <el-form-item label="身份证号">
+                    <el-input v-model="editForm.peopleId" auto-complete="off"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col span="12">
+                  <el-form-item label="民族">
+                    <el-input  v-model="editForm.ethnic" auto-complete="off" ></el-input>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col span="12">
+                  <el-form-item label="是否建立电子健康档案">
+                    <el-select v-model="editForm.electronicRecord" placeholder="请选择" style="width: 100%">
+                      <el-option key="1" label="是" value="是"></el-option>
+                      <el-option key="2" label="否" value="否"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col span="12">
+                  <el-form-item label="是否动态使用健康档案">
+                    <el-select v-model="editForm.activeFiles" placeholder="请选择" style="width: 100%">
+                      <el-option key="1" label="是" value="是"></el-option>
+                      <el-option key="2" label="否" value="否"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+                <el-col span="12">
+                  <el-form-item label="人群分类">
+                    <el-select v-model="editForm.crowd" placeholder="请选择" style="width: 100%">
+                      <el-option key="1" label="定居" value="定居"></el-option>
+                      <el-option key="2" label="流动" value="流动"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+              <el-row>
+                <el-col span="12">
+                  <el-form-item label="责任医生">
+                    <el-input v-model="editForm.responDoctor" auto-complete="off"></el-input>
+                  </el-form-item>
+                </el-col>
+                <el-col span="12">
+                  <el-form-item label="生存状态">
+                    <el-select v-model="editForm.state" placeholder="请选择" style="width: 100%">
+                      <el-option key="1" label="存活" value="存活"></el-option>
+                      <el-option key="2" label="死亡" value="死亡"></el-option>
+                    </el-select>
+                  </el-form-item>
+                </el-col>
+              </el-row>
+          </el-tabs>
+
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button v-if="dialogStatus=='create'" type="primary" @click="createData">添加</el-button>
+        <el-button v-else type="primary" v-if="edit" @click="createData">新增修改</el-button>
+        <el-button v-else type="primary" v-if="edit" @click="updateData">修改</el-button>
+        <el-button @click.native="dialogFormVisible=false">取消</el-button>
+      </div>
+    </el-dialog>
+
+    <!--查询界面-->
+    <el-dialog :title="textMap[dialogStatus]" :visible.sync="dialogFormVisible2" :close-on-click-modal="false" center>
+      <el-form :model="findForm" label-width="80px" :rules="findFormRules" ref="findForm">
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button type="primary" v-on:click="searchs" style="background-color:#4db2ee;border-color:transparent" icon="el-icon-search" >查询</el-button>
+        </div>
+    </el-dialog>
+  </section>
+</template>
+
+<script>
+  import util from '@/utils/table.js'
+  import {
+    getUserListPage,
+    removeUser,
+    batchRemoveUser,
+    editUser,
+    addUser
+  } from '@/api/residents'
+  import city from '@/api/city.js'
+  export default {
+    name: 'residents',
+    data() {
+      return {
+        edit: true,
+        options: city.city(),
+        dialogStatus: '',
+        tableHeight: window.innerHeight - 300,
+        area: [],
+        activeName: 'first',
+        textMap: {
+          update: '编辑',
+          create: '添加',
+          search: '查询',
+          detail: '详情'
+        },
+        dialogFormVisible: false,
+        dialogFormVisible2: false,
+        filters: {
+          area: [],
+          name: '',
+          age: '',
+          sex: '',
+          creator: '',
+          peopleId: '',
+          ethnic: [],
+          responDoctor: '',
+          state: '',
+          crowd: ''
+        },
+        ethnic: [
+          { value: '汉族', label: '汉族' },
+          { value: '蒙古族', label: '蒙古族' },
+          { value: '回族', label: '回族' },
+          { value: '藏族', label: '藏族' },
+          { value: '维吾尔族', label: '维吾尔族' },
+          { value: '苗族', label: '苗族' },
+          { value: '苗族', label: '彝族' },
+          { value: '苗族', label: '壮族' },
+          { value: '布依族', label: '布依族' },
+          { value: '朝鲜族', label: '朝鲜族' },
+          { value: '满族', label: '满族' },
+          { value: '侗族', label: '侗族' },
+          { value: '瑶族', label: '瑶族' },
+          { value: '白族', label: '白族' },
+          { value: '土家族', label: '土家族' },
+          { value: '哈尼族', label: '哈尼族' },
+          { value: '哈萨克族', label: '哈萨克族' },
+          { value: '傣族', label: '傣族' },
+          { value: '傈僳族', label: '傈僳族' },
+          { value: '黎族', label: '黎族' },
+          { value: '佤族', label: '佤族' },
+          { value: '畲族', label: '畲族' },
+          { value: '高山族', label: '高山族' },
+          { value: '拉祜族', label: '拉祜族' },
+          { value: '水族', label: '水族' },
+          { value: '东乡族', label: '东乡族' },
+          { value: '纳西族', label: '纳西族' },
+          { value: '景颇族', label: '景颇族' },
+          { value: '柯尔克孜族', label: '柯尔克孜族' },
+          { value: '土族', label: '土族' },
+          { value: '达斡尔族', label: '达斡尔族' },
+          { value: '仫佬族', label: '仫佬族' },
+          { value: '羌族', label: '羌族' },
+          { value: '布朗族', label: '布朗族' },
+          { value: '撒拉族', label: '撒拉族' },
+          { value: '毛南族', label: '毛南族' },
+          { value: '仡佬族', label: '仡佬族' },
+          { value: '锡伯族', label: '锡伯族' },
+          { value: '阿昌族', label: '阿昌族' },
+          { value: '普米族', label: '普米族' },
+          { value: '塔吉克族', label: '塔吉克族' },
+          { value: '怒族', label: '怒族' },
+          { value: '乌孜别克族', label: '乌孜别克族' },
+          { value: '俄罗斯族', label: '俄罗斯族' },
+          { value: '鄂温克族', label: '鄂温克族' },
+          { value: '德昂族', label: '德昂族' },
+          { value: '保安族', label: '保安族' },
+          { value: '裕固族', label: '裕固族' },
+          { value: '京族', label: '京族' },
+          { value: '塔塔尔族', label: '塔塔尔族' },
+          { value: '独龙族', label: '独龙族' },
+          { value: '鄂伦春族', label: '鄂伦春族' },
+          { value: '赫哲族', label: '赫哲族' },
+          { value: '门巴族', label: '门巴族' },
+          { value: '珞巴族', label: '珞巴族' },
+          { value: '基诺族', label: '基诺族' }
+        ],
+        ceshi: '',
+        users: [],
+        total: 0,
+        page: 1,
+        sels: [], // 列表选中列
+        editFormRules: {
+          name: [{ required: true, message: 'hhh', trigger: 'blur' }],
+          peopleId: [{ required: true, message: '', trigger: 'blur' }]
+        },
+        findFormRules: {
+          name: [{ required: true, message: '请输入姓名', trigger: 'blur' }]
+        },
+        // 编辑界面数据
+        editForm: {
+          area: '',
+          name: '',
+          age: '',
+          sex: '',
+          electronicRecord: '',
+          activeFiles: '',
+          crowd: '',
+          ethnic: '',
+          peopleId: '',
+          creator: '',
+          responDoctor: '',
+          state: ''
+        },
+        addFormVisible: false, // 新增界面是否显示
+        addFormRules: {
+          name: [{ required: true, message: '', trigger: 'blur' }],
+          peopleId: [{ required: true, message: '', trigger: 'blur' }]
+
+        }
+      }
+    },
+    methods: {
+      clear() {
+        this.filters = {
+          area: [],
+          name: '',
+          age: '',
+          sex: '',
+          creator: '',
+          peopleId: '',
+          ethnic: [],
+          responDoctor: '',
+          state: '',
+          crowd: ''
+        }
+        this.getUsers()
+      },
+      timeFormat: function(row, column) {
+        let date = row[column.property]
+        date =
+          !date || date === ''
+            ? ''
+            : util.formatDate.format(new Date(date), 'yyyy-MM-dd')
+        return date
+      },
+      goto(row, event) {
+        this.$router.push({
+          name: 'dashboard',
+          params: {
+            hid: row.peopleId
+          }
+        })
+      },
+      // 性别显示转换
+      formatSex: function(row, column) {
+        return row.sex === 1 ? '男' : row.sex === 0 ? '女' : '未知'
+      },
+      handleCurrentChange(val) {
+        this.page = val
+        this.getUsers()
+      },
+      findbtn() {
+        this.dialogStatus = 'search'
+        this.dialogFormVisible2 = true
+        this.findForm = {
+          area: '',
+          name: '',
+          age: '',
+          sex: '',
+          peopleId: '',
+          creator: '',
+          ethnic: '',
+          responDoctor: '',
+          state: ''
+        }
+      },
+      // 查询
+      searchs() {
+        this.page = 1
+        this.getUsers()
+      },
+      handleRowChange(row, event) {
+        this.dialogStatus = 'detail'
+        this.dialogFormVisible = true
+        this.editForm = Object.assign({}, row)
+        this.edit = false
+      },
+      // 显示编辑界面
+      handleEdit(index, row) {
+        this.area = []
+        this.dialogStatus = 'update'
+        this.dialogFormVisible = true
+        this.editForm = Object.assign({}, row)
+        this.area = this.editForm.area.split('/')
+        this.edit = true
+      },
+      // 显示新增界面
+      handleAdd() {
+        this.dialogStatus = 'create'
+        this.dialogFormVisible = true
+        this.editForm = {
+          area: '',
+          name: '',
+          age: '',
+          sex: '',
+          electronicRecord: '',
+          activeFiles: '',
+          crowd: '',
+          ethnic: '',
+          creator: this.$store.getters.name,
+          peopleId: '',
+          responDoctor: '',
+          state: ''
+        }
+        this.edit = false
+      },
+      // 获取用户列表
+      getUsers() {
+        const para = {
+          page: this.page,
+          size: 20,
+          filters: {
+            area: this.filters.area,
+            creator: this.filters.creator,
+            crowd: this.filters.crowd,
+            name: this.filters.name,
+            peopleId: this.filters.peopleId,
+            sex: this.filters.sex,
+            responDoctor: this.filters.responDoctor,
+            ethnic: this.filters.ethnic,
+            state: this.filters.state,
+            age: this.filters.age
+          }
+        }
+        para.filters.area = ''
+        for (const itm of this.filters.area) {
+          para.filters.area += itm
+          para.filters.area += '/'
+        }
+        para.filters.area = para.filters.area.substr(0, para.filters.area.length - 1)
+        para.filters.ethnic = ''
+        for (const itm of this.filters.ethnic) {
+          para.filters.ethnic += itm
+          para.filters.ethnic += '/'
+        }
+        para.filters.ethnic = para.filters.ethnic.substr(0, para.filters.ethnic.length - 1)
+        getUserListPage(para).then(res => {
+          this.total = res.totalCount
+          this.users = res.detailModelList
+          if (this.page > 1 && (this.page - 1) * 20 >= this.total) {
+            this.page = this.page - 1
+            this.getUsers()
+          }
+        })
+        this.dialogFormVisible2 = false
+        this.findForm = {
+          area: '',
+          name: '',
+          age: '',
+          sex: '',
+          creator: '',
+          electronicRecord: '',
+          activeFiles: '',
+          crowd: '',
+          ethnic: '',
+          peopleId: '',
+          responDoctor: '',
+          state: ''
+        }
+      },
+      // 删除
+      handleDel(index, row) {
+        this.$confirm('确认删除该记录吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        })
+          .then(() => {
+            const para = row.id
+            removeUser(para).then(res => {
+              this.$message({
+                message: '删除成功',
+                type: 'success'
+              })
+              this.getUsers()
+            })
+          })
+          .catch(() => {})
+      },
+      // 编辑
+      updateData() {
+        this.$refs.editForm.validate(valid => {
+          if (valid) {
+            this.$confirm('确认提交吗？', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消'
+            })
+              .then(() => {
+                const para = Object.assign({}, this.editForm)
+                para.modifier = this.$store.getters.name
+                para.birth =
+                  !para.birth || para.birth === ''
+                    ? ''
+                    : util.formatDate.format(new Date(para.birth), 'yyyy-MM-dd')
+                para.area = ''
+                for (const itm of this.area) {
+                  para.area += itm
+                  para.area += '/'
+                }
+                para.area = para.area.substr(0, para.area.length - 1)
+                editUser(para).then(res => {
+                  this.$message({
+                    message: '提交成功',
+                    type: 'success'
+                  })
+                  this.$refs['editForm'].resetFields()
+                  this.dialogFormVisible = false
+                  this.getUsers()
+                })
+              })
+              .catch(e => {
+                // 打印一下错误
+                console.log(e)
+              })
+          }
+        })
+      },
+      // 新增
+      createData: function() {
+        this.$refs.editForm.validate(valid => {
+          if (valid) {
+            this.$confirm('确认提交吗？', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消'
+            })
+              .then(() => {
+                this.editForm.id = (parseInt(Math.random() * 100)).toString() // mock a id
+                const para = Object.assign({}, this.editForm)
+                console.log(para)
+                para.docDate =
+                  !para.docDate || para.docDate === ''
+                    ? ''
+                    : util.formatDate.format(new Date(para.docDate), 'yyyy-MM-dd')
+                para.area = ''
+                for (const itm of this.area) {
+                  para.area += itm
+                  para.area += '/'
+                }
+                para.area = para.area.substr(0, para.area.length - 1)
+                addUser(para).then(res => {
+                  this.$message({
+                    message: '提交成功',
+                    type: 'success'
+                  })
+                  this.$refs['editForm'].resetFields()
+                  this.dialogFormVisible = false
+                  this.getUsers()
+                })
+              })
+              .catch(e => {
+                // 打印一下错误
+                console.log(e)
+              })
+          }
+        })
+      },
+      // 全选单选多选
+      selsChange(sels) {
+        this.sels = sels
+      },
+      // 批量删除
+      batchRemove() {
+        var ids = this.sels.map(item => item.id).toString()
+        this.$confirm('确认删除选中记录吗？', '提示', {
+          type: 'warning'
+        })
+          .then(() => {
+            const para = { ids: ids }
+            batchRemoveUser(para).then(res => {
+              this.$message({
+                message: '删除成功',
+                type: 'success'
+              })
+              this.getUsers()
+            })
+          })
+          .catch(() => {})
+      }
+    },
+    mounted() {
+      this.getUsers()
+    }
+  }
+</script>
+
+<style scoped>
+  .mystyle{
+    font-size: 14px;
+    color: #323232;
+  }
+</style>
+

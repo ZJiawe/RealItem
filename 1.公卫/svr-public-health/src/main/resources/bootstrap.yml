@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: svr-public-health-cws
+  cloud:
+    config:
+      username: user
+      password: configuration
+
+---
+spring:
+  profiles: dev
+  cloud:
+    config:
+      uri: ${spring.config.uri:http://172.19.103.73:1221}
+      label: ${spring.config.label:dev}
+
+---
+spring:
+  profiles: prod
+  cloud:
+    config:
+      uri: ${spring.config.uri}
+      label: ${spring.config.label}
+
